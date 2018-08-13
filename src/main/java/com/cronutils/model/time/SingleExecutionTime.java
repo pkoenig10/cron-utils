@@ -409,11 +409,11 @@ public class SingleExecutionTime implements ExecutionTime {
 
     private ExecutionTimeResult getPreviousPotentialHour(final ZonedDateTime date, final int highestMinute, final int highestSecond) {
         NearestValue nearestValue;
-        ZonedDateTime newDate;
+        LocalDateTime newDate;
         nearestValue = hours.getPreviousValue(date.getHour(), 0);
         if (nearestValue.getShifts() > 0) {
-            newDate = date.truncatedTo(DAYS).plusDays(1).minusSeconds(1).minusDays(nearestValue.getShifts());
-            return new ExecutionTimeResult(newDate, false);
+            newDate = date.toLocalDateTime().truncatedTo(DAYS).withHour(0).plusDays(1).minusSeconds(1).minusDays(nearestValue.getShifts());
+            return new ExecutionTimeResult(ZonedDateTime.of(newDate, date.getZone()), false);
         }
         return new ExecutionTimeResult(date.with(LocalTime.of(nearestValue.getValue(), highestMinute, highestSecond)).truncatedTo(SECONDS), false);
     }
